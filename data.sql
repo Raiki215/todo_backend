@@ -1,4 +1,4 @@
-CREATE DARABASE todo_app;
+CREATE DATABASE todo_app;
 
 CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
