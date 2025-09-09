@@ -3,7 +3,7 @@ from flask_login import current_user, login_required
 from google import genai
 from dotenv import load_dotenv
 from datetime import datetime
-import os
+import os, re
 import json
 from .db_connection import get_connection
 
@@ -35,13 +35,28 @@ def ai_result():
                 - deadline（期限、YYYY-MM-DD HH:mm、時間指定がない場合は日付のみ）
                 - estimated_time（想定時間、分単位、タスクの内容に応じて合理的に推定）
                 - tags（関連するタグの配列、日本語）
+                - priority（優先度、1から5の整数、5が最も高い優先度。文章に明示がない場合は Gemini が内容や期限を考慮して決定する）
+                ルール:
+                - タグが「重要」の場合は priority=5
+                - タグが「仕事」の場合は priority=4
+                - タグが「健康」の場合は priority=3
+                - タグが「私用」の場合は priority=2
+                - タグが複数ある場合は、最も優先度が高いタグを採用する
+                - タグが上記に当てはまらない場合は Gemini が内容を考慮して 1〜5 で合理的に決定する
                 文章:{text}
                 必ずJSONのみを出力してください。マークダウンのコードブロック（```）は使用しないでください。
             """
         )
 
         try:
-            result = json.loads(response.text)
+            response_text = getattr(response, 'text', str(response))
+            match = re.search(r'```(?:json)?\s*({.*?})\s*```', response_text, re.DOTALL)
+            if match:
+                json_text = match.group(1)
+            else:
+                json_text = response_text.strip()
+
+            result = json.loads(json_text)
             if hasattr(current_user, 'user_id'):
                 user_id = current_user.user_id
             else:
@@ -73,10 +88,11 @@ def save_todo_with_tags(data, user_id):
         deadline = data.get("deadline")
         estimated_time = data.get("estimated_time")
         tags = data.get("tags", [])
+        priority = data.get("priority")
 
         cursor.execute(
-            "INSERT INTO todos (user_id, todo, deadline, estimated_time) VALUES (%s, %s, %s, %s) RETURNING todo_id",
-            (user_id, todo, deadline, estimated_time)
+            "INSERT INTO todos (user_id, todo, deadline, estimated_time, priority) VALUES (%s, %s, %s, %s, %s) RETURNING todo_id",
+            (user_id, todo, deadline, estimated_time, priority)
         )
         todo_id = cursor.fetchone()[0]
         for tag in tags:
