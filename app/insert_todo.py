@@ -116,3 +116,28 @@ def save_todo_with_tags(data, user_id):
     finally:
         cursor.close()
         conn.close()
+
+def manual_save_todo():
+    try:
+        data = request.json
+        required = ["todo", "deadline", "estimated_time", "tags", "priority"]
+        for key in required:
+            if key not in data:
+                return jsonify({"error": f"{key} フィールドが必要です"}), 400
+
+        tags = data["tags"]
+        if isinstance(tags, str):
+            tags = [tag.strip() for tag in tags.split(",") if tag.strip()]
+            data["tags"] = tags
+
+        user_id = current_user.user_id
+        todo_id = save_todo_with_tags(data, user_id)
+        return jsonify({
+            "message": "手入力TODOを作成しました",
+            "todo_id": todo_id,
+            "data": data
+        }), 201
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": f"手入力TODO登録エラー: {str(e)}"}), 500

@@ -6,7 +6,7 @@ from flask_login import LoginManager, login_required
 from .login import login, logout
 import os
 from .models import User
-from .insert_todo import ai_result
+from .insert_todo import ai_result, manual_save_todo
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -57,5 +57,10 @@ def create_app():
     @login_required
     def insert_todo():
         return ai_result()
+
+    @app.route('/manual_insert_todo', methods=['POST'])
+    @login_required
+    def manual_insert_todo():
+        return manual_save_todo()
 
     return app
