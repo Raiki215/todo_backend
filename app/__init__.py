@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify , render_template#renderは後程消す
 from .db_connection import get_connection
 from .register import register_user
 from flask_cors import CORS
@@ -6,6 +6,10 @@ from flask_login import LoginManager, login_required
 from .login import login, logout
 import os
 from .models import User
+
+# 動作確認後で消す
+login_user = None
+
 
 def create_app():
     app = Flask(__name__)
@@ -34,7 +38,6 @@ def create_app():
         conn = get_connection()
         if conn:
             return "Hello, Flask!"
-        return "Database connection failed", 500
 
 
     @app.route('/register', methods=['POST'])
@@ -48,5 +51,13 @@ def create_app():
     @app.route('/logout', methods=['POST'])
     def logout_route():
         return logout()
+    
+    # 動作確認用後で消す
+    @app.route('/test')
+    def test():
+        conn = get_connection()
+        if conn:
+            return render_template('test.html', name="Alice")
+        return "Database connection failed", 500
 
     return app

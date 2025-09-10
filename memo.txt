@@ -1,0 +1,51 @@
+insert into todos(todo_id, todo, deadline, priority, finish_flg, estimated_time, user_id) value(%s, %s, %s, %s, %s, %s, %s)
+
+-- ユーザー作成
+INSERT INTO users (name, email, password) VALUES
+('Alice', 'alice@example.com', 'hashed_pw_1'),
+('Bob', 'bob@example.com', 'hashed_pw_2');
+
+-- タスク追加（Aliceのタスク）
+INSERT INTO todos (todo, deadline, priority, finish_flg, estimated_time, user_id) VALUES
+('Buy groceries', '2025-09-10 18:00:00', 2, FALSE, 30, 1),
+('Read book', '2025-09-12 21:00:00', 3, FALSE, 60, 1);
+
+-- タグ作成
+INSERT INTO tags (tag) VALUES
+('Personal'),
+('Urgent'),
+('Work');
+
+-- タグ付け（中間テーブル）
+-- 1番目のToDo（Buy groceries）に「Personal」と「Urgent」タグをつける
+INSERT INTO todo_to_tag (todo_id, tag_id) VALUES
+(1, 1),
+(1, 2);
+
+-- 2番目のToDo（Read book）に「Personal」タグをつける
+INSERT INTO todo_to_tag (todo_id, tag_id) VALUES
+(2, 1);
+
+-- Aliceの追加タスク
+INSERT INTO todos (todo, deadline, priority, finish_flg, estimated_time, user_id) VALUES
+('Clean the house', '2025-09-15 16:00:00', 1, FALSE, 90, 1),
+('Call mom', '2025-09-09 20:00:00', 2, FALSE, 10, 1),
+('Finish project proposal', '2025-09-11 23:59:00', 5, FALSE, 180, 1),
+('Go to gym', '2025-09-10 07:00:00', 3, FALSE, 60, 1);
+
+INSERT INTO todos (todo, deadline, priority, finish_flg, estimated_time, user_id) VALUES
+('Clean the house', '2025-09-15 16:00:00', 1, FALSE, 90, 2);
+-- タグ付け
+INSERT INTO todo_to_tag (todo_id, tag_id) VALUES
+(3, 1),          -- Clean the house → Personal
+(4, 1), (4, 2),  -- Call mom → Personal, Urgent
+(5, 2), (5, 3),  -- Finish project proposal → Urgent, Work
+(6, 1);          -- Go to gym → Personal
+
+INSERT INTO todo_to_tag (todo_id, tag_id) VALUES
+(7,1),(7,2),(7,3);
+
+
+
+・一覧をjsonで返す
+・ルートにアクセスで返す
