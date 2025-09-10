@@ -6,6 +6,10 @@ from flask_login import LoginManager, login_required
 from .login import login, logout
 import os
 from .models import User
+from .insert_todo import ai_result, manual_save_todo
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def create_app():
     app = Flask(__name__)
@@ -48,5 +52,15 @@ def create_app():
     @app.route('/logout', methods=['POST'])
     def logout_route():
         return logout()
+
+    @app.route('/insert_todo', methods=['POST'])
+    @login_required
+    def insert_todo():
+        return ai_result()
+
+    @app.route('/manual_insert_todo', methods=['POST'])
+    @login_required
+    def manual_insert_todo():
+        return manual_save_todo()
 
     return app
