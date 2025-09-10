@@ -8,6 +8,7 @@ import os
 from .models import User
 from .insert_todo import ai_result, manual_save_todo
 from dotenv import load_dotenv
+from .send_email import send_email
 
 load_dotenv()
 
@@ -62,5 +63,10 @@ def create_app():
     @login_required
     def manual_insert_todo():
         return manual_save_todo()
+
+    @app.route('/send_email', methods=['POST'])
+    @login_required
+    def send_email_route():
+        return send_email()
 
     return app
