@@ -39,7 +39,6 @@ def create_app():
         conn = get_connection()
         if conn:
             return "Hello, Flask!"
-        return "Database connection failed", 500
 
 
     @app.route('/register', methods=['POST'])
