@@ -61,12 +61,10 @@ def ai_result():
                 user_id = current_user.user_id
             else:
                 return jsonify({"error": "ユーザーが認証されていません"}), 401
-
-            todo_id = save_todo_with_tags(result, user_id)
+            todo_info = save_todo_with_tags(result, user_id)
             return jsonify({
                 "message": "TODOを作成しました",
-                "todo_id": todo_id,
-                "data": result
+                "todo": todo_info,
             }), 201
         except (json.JSONDecodeError, AttributeError) as e:
             response_text = getattr(response, 'text', str(response))
@@ -95,6 +93,7 @@ def save_todo_with_tags(data, user_id):
             (user_id, todo, deadline, estimated_time, priority)
         )
         todo_id = cursor.fetchone()[0]
+        tags_info = []
         for tag in tags:
             cursor.execute("SELECT tag_id FROM tags WHERE tag = %s", (tag,))
             tag_row = cursor.fetchone()
@@ -106,8 +105,17 @@ def save_todo_with_tags(data, user_id):
                 tag_id = cursor.fetchone()[0]
 
             cursor.execute("INSERT INTO todo_to_tag (todo_id, tag_id) VALUES (%s, %s)", (todo_id, tag_id))
+            tags_info.append(tag)
         conn.commit()
-        return todo_id
+        todo_info = {
+            "todo_id": todo_id,
+            "todo": todo,
+            "deadline": deadline,
+            "estimated_time": estimated_time,
+            "priority": priority,
+            "tags": tags_info
+        }
+        return todo_info
     except Exception as e:
         conn.rollback()
         print(f"データベースエラー: {e}")

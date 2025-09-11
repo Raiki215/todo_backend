@@ -54,7 +54,7 @@ def create_app():
         return logout()
 
     @app.route('/insert_todo', methods=['POST'])
-    @login_required
+    # @login_required
     def insert_todo():
         return ai_result()
 
