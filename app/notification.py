@@ -20,7 +20,7 @@ def get_notification_history():
         JOIN
             todos t ON n.todo_id = t.todo_id
         WHERE
-            n.user_id = %s
+            n.user_id = %s AND n.delete_flg = FALSE
         ORDER BY
             n.created_at DESC""", (user_id,))
         conn.commit()
@@ -35,6 +35,28 @@ def get_notification_history():
                 item[col] = val
             result.append(item)
         return jsonify(result), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": "Internal Server Error"}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
+def insert_notification(todo_id, user_id, message):
+    conn = get_connection()
+    try:
+        sql = """
+        INSERT INTO notifications (todo_id, user_id, message) VALUES (%s, %s, %s)
+        """
+        cursor = conn.cursor()
+        cursor.execute(sql, (todo_id, user_id, message))
+
+        conn.commit()
+        notification = cursor.fetchone()
+        conn.commit()
+        columns = [desc[0] for desc in cursor.description]
+        result = dict(zip(columns, notification))
+        return result, 201
     except Exception as e:
         print(e)
         return jsonify({"error": "Internal Server Error"}), 500
