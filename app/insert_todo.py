@@ -139,11 +139,10 @@ def manual_save_todo():
             data["tags"] = tags
 
         user_id = current_user.user_id
-        todo_id = save_todo_with_tags(data, user_id)
+        todo_info = save_todo_with_tags(data, user_id)
         return jsonify({
             "message": "手入力TODOを作成しました",
-            "todo_id": todo_id,
-            "data": data
+            "todo": todo_info,
         }), 201
     except Exception as e:
         import traceback
