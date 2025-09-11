@@ -43,3 +43,21 @@ CREATE TABLE todo_to_tag (
         ON DELETE CASCADE,
     CONSTRAINT unique_todo_tag UNIQUE (todo_id, tag_id) -- 同じ組み合わせの重複を防ぐ
 );
+
+CREATE TABLE notifications (
+    notification_id SERIAL PRIMARY KEY,
+    todo_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    message TEXT NOT NULL,
+    read_flg BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    delete_flg BOOLEAN DEFAULT FALSE,
+    CONSTRAINT fk_todo
+        FOREIGN KEY(todo_id)
+        REFERENCES todos(todo_id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_user
+        FOREIGN KEY(user_id)
+        REFERENCES users(user_id)
+        ON DELETE CASCADE
+);
