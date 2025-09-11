@@ -45,7 +45,7 @@ CREATE TABLE todo_to_tag (
 );
 
 CREATE TABLE notifications (
-    notifications_id SERIAL PRIMARY KEY,
+    notification_id SERIAL PRIMARY KEY,
     todo_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
     message TEXT NOT NULL,
