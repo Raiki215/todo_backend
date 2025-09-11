@@ -9,7 +9,7 @@ from .models import User
 from .insert_todo import ai_result, manual_save_todo
 from dotenv import load_dotenv
 from .send_email import send_email
-from .notification import get_notification_history
+from .notification import get_notification_history, read_notification, delete_notification
 
 load_dotenv()
 
@@ -74,5 +74,14 @@ def create_app():
     def notification_history_route():
         return get_notification_history()
 
+    @app.route('/read_notification', methods=['GET'])
+    @login_required
+    def read_notification_route():
+        return read_notification()
+
+    @app.route('/delete_notification', methods=['GET'])
+    @login_required
+    def delete_notification_route():
+        return delete_notification()
 
     return app
