@@ -8,9 +8,9 @@ import json
 from .db_connection import get_connection
 
 load_dotenv()
-# api_key = os.getenv("GEMINI_API_KEY")
-# client = genai.Client(api_key=api_key)
-# today = datetime.now()
+api_key = os.getenv("GEMINI_API_KEY")
+client = genai.Client(api_key=api_key)
+today = datetime.now()
 
 def ai_result():
     try:
