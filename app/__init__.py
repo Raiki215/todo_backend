@@ -78,25 +78,25 @@ def create_app():
     
     # userの全てのtodoを取得　
     @app.route('/get_user_todos', methods=['GET'])
-    # @login_required
+    @login_required
     def get_user_todos_route():
         return getAll_todos()
     
     # 完了済みfinish_flg=TRUE 
     @app.route('/get_user_todos_finished', methods=['GET'])
-    # @login_required
+    @login_required
     def get_user_todos_finished_route():
         return getCompleted_todos()
     
     #まだ完了していないtodo 
     @app.route('/get_user_todos_yet', methods=['GET'])
-    # @login_required
+    @login_required
     def get_user_todos_yet_route():
         return getNotYet_todos()
     
     # 優先度3以上のものだけ
     @app.route('/get_user_todos_highpriority', methods=['GET'])
-    # @login_required
+    @login_required
     def get_user_todos_highpriority_route():
         return high_priority()
     
@@ -108,7 +108,7 @@ def create_app():
     
     # finishflgのonoff
     @app.route('/get_user_todos_finishflg_update', methods=['POST'])
-    # @login_required
+    @login_required
     def get_user_todos_update_finishflg_route():
         return finish_flg_OnOff()
     
