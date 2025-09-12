@@ -19,6 +19,11 @@ def login():
 
     return jsonify({
         "message": "ログインに成功しました",
+        "user": {
+            "user_id": user.user_id,
+            "name": user.name,
+            "email": user.email
+        }
     }), 200
 
 def logout():
