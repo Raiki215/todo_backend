@@ -122,3 +122,32 @@ def edit_todo_all():
     finally:
         cursor.close()
         connection.close()
+        
+def finish_flg_OnOff():
+    connection = get_connection()
+    try:
+        
+        cursor = connection.cursor()
+        data = request.json
+        todo_id = data.get("todo_id")
+        # finish_flg = data.get("fininsh_flg")
+        cursor.execute("UPDATE todos SET finish_flg = NOT finish_flg WHERE todo_id = %s", (todo_id,))
+        connection.commit()
+        cursor.execute("select finish_flg from todos where todo_id = %s",(todo_id,))
+        finish_flg = cursor.fetchone()[0]
+
+        if finish_flg:
+            msg = f"successful !! This todo Completed !! :)"
+        else:
+            msg = f"successful !! This todo status has been restored."
+            
+        
+        return jsonify({
+            "message" : msg,
+            "todo_id": todo_id,
+            "finish_flg":finish_flg,
+        }),200
+    except Exception as e:
+        return jsonify({
+            "error" : "Could not update the this todos finish_flg "
+        }),500
