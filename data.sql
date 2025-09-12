@@ -33,6 +33,7 @@ CREATE TABLE todo_to_tag (
     id SERIAL PRIMARY KEY,
     todo_id INTEGER NOT NULL,
     tag_id INTEGER NOT NULL,
+    delete_flg BOOLEAN DEFAULT FALSE,
     CONSTRAINT fk_todo
         FOREIGN KEY(todo_id)
         REFERENCES todos(todo_id)
