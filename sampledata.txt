@@ -1,0 +1,54 @@
+-- ユーザー
+INSERT INTO users (name, email, password) VALUES
+('山田太郎', 'taro@example.com', 'password123'),
+('佐藤花子', 'hanako@example.com', 'password456');
+
+-- タグ
+INSERT INTO tags (tag) VALUES
+('仕事'),
+('勉強'),
+('プライベート');
+
+-- TODO
+INSERT INTO todos (todo, deadline, priority, finish_flg, estimated_time, user_id, delete_flg) VALUES
+('レポート提出', '2025-09-15 17:00:00', 3, FALSE, 120, 1, FALSE),
+('会議準備', '2025-09-12 09:00:00', 2, TRUE, 60, 1, FALSE),
+('英語の勉強', '2025-09-20 20:00:00', 1, FALSE, 30, 2, FALSE),
+('買い物', '2025-09-11 18:00:00', 2, FALSE, 45, 2, FALSE),
+('プレゼン資料作成', '2025-09-13 10:00:00', 3, FALSE, 90, 1, FALSE);
+
+-- TODOとタグの紐付け
+INSERT INTO todo_to_tag (todo_id, tag_id, delete_flg) VALUES
+(1, 2, FALSE), -- レポート提出 → 勉強
+(2, 1,  FALSE), -- 会議準備 → 仕事
+(3, 2,  FALSE), -- 英語の勉強 → 勉強
+(4, 3,  FALSE), -- 買い物 → プライベート
+(5, 1,  FALSE), -- プレゼン資料作成 → 仕事
+(5, 2,  FALSE); -- プレゼン資料作成 → 勉強
+
+-- 追加ユーザー
+INSERT INTO users (name, email, password) VALUES
+('田中一郎', 'ichiro@example.com', 'pass789'),
+('高橋次郎', 'jiro@example.com', 'pass1011');
+
+-- 追加タグ
+INSERT INTO tags (tag) VALUES
+('健康'),
+('趣味');
+
+-- 追加TODO
+INSERT INTO todos (todo, deadline, priority, finish_flg, estimated_time, user_id, delete_flg) VALUES
+('ジョギング', '2025-09-16 06:30:00', 5, FALSE, 40, 3, FALSE),
+('読書', '2025-09-17 21:00:00', 2, FALSE, 60, 4, FALSE),
+('病院予約', '2025-09-14 10:00:00', 4, TRUE, 10, 3, FALSE),
+('ギター練習', '2025-09-18 19:00:00', 1, FALSE, 30, 4, FALSE),
+('資料整理', '2025-09-19 15:00:00', 3, FALSE, 50, 3, FALSE);
+
+-- 追加TODOとタグの紐付け
+INSERT INTO todo_to_tag (todo_id, tag_id, delete_flg) VALUES
+(6, 4, FALSE), -- ジョギング → 健康
+(7, 5, FALSE), -- 読書 → 趣味
+(8, 4, FALSE), -- 病院予約 → 健康
+(9, 5, FALSE), -- ギター練習 → 趣味
+(10, 1, FALSE), -- 資料整理 → 仕事
+(10, 4, FALSE); -- 資料整理 → 健康
