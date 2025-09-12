@@ -11,7 +11,7 @@ def getAll_todos():
         cursor = connection.cursor()
         sql = """
             SELECT t.todo_id, t.todo, t.deadline, t.priority, t.finish_flg, t.estimated_time, t.user_id,
-                   tg.tag_id, tg.tag
+                   tg.tag
             FROM todos t
             LEFT JOIN todo_to_tag tt ON t.todo_id = tt.todo_id AND tt.delete_flg = FALSE
             LEFT JOIN tags tg ON tt.tag_id = tg.tag_id
@@ -20,7 +20,6 @@ def getAll_todos():
         """
         cursor.execute(sql, (user_id,))
         result = cursor.fetchall()
-        columns = [desc[0] for desc in cursor.description]
 
         todos_dict = {}
         for row in result:
@@ -36,12 +35,9 @@ def getAll_todos():
                     "user_id": row[6],
                     "tags": []
                 }
-            # タグがあれば追加
-            if row[7] is not None and row[8] is not None:
-                todos_dict[todo_id]["tags"].append({
-                    "tag_id": row[7],
-                    "tag": row[8]
-                })
+            # タグ名があれば追加
+            if row[7] is not None:
+                todos_dict[todo_id]["tags"].append(row[7])
 
         todos = list(todos_dict.values())
 
@@ -55,8 +51,6 @@ def getAll_todos():
         cursor.close()
         connection.close()
 
-
-# 完了済みのタスクを優先度の降順で表示（タグ情報も含める）
 def getCompleted_todos():
     user_id = 1 # 仮
     # user_id = current_user.user_id
@@ -65,7 +59,7 @@ def getCompleted_todos():
         cursor = connection.cursor()
         sql = """
             SELECT t.todo_id, t.todo, t.deadline, t.priority, t.finish_flg, t.estimated_time, t.user_id,
-                   tg.tag_id, tg.tag
+                   tg.tag
             FROM todos t
             LEFT JOIN todo_to_tag tt ON t.todo_id = tt.todo_id AND tt.delete_flg = FALSE
             LEFT JOIN tags tg ON tt.tag_id = tg.tag_id
@@ -89,11 +83,8 @@ def getCompleted_todos():
                     "user_id": row[6],
                     "tags": []
                 }
-            if row[7] is not None and row[8] is not None:
-                todos_dict[todo_id]["tags"].append({
-                    "tag_id": row[7],
-                    "tag": row[8]
-                })
+            if row[7] is not None:
+                todos_dict[todo_id]["tags"].append(row[7])
 
         todos = list(todos_dict.values())
 
@@ -107,7 +98,6 @@ def getCompleted_todos():
         cursor.close()
         connection.close()
 
-# 未完了のタスクを優先度の降順で表示（タグ情報も含める）
 def getNotYet_todos():
     user_id = 1 # 仮
     # user_id = current_user.user_id
@@ -116,7 +106,7 @@ def getNotYet_todos():
         cursor = connection.cursor()
         sql = """
             SELECT t.todo_id, t.todo, t.deadline, t.priority, t.finish_flg, t.estimated_time, t.user_id,
-                   tg.tag_id, tg.tag
+                   tg.tag
             FROM todos t
             LEFT JOIN todo_to_tag tt ON t.todo_id = tt.todo_id AND tt.delete_flg = FALSE
             LEFT JOIN tags tg ON tt.tag_id = tg.tag_id
@@ -140,11 +130,8 @@ def getNotYet_todos():
                     "user_id": row[6],
                     "tags": []
                 }
-            if row[7] is not None and row[8] is not None:
-                todos_dict[todo_id]["tags"].append({
-                    "tag_id": row[7],
-                    "tag": row[8]
-                })
+            if row[7] is not None:
+                todos_dict[todo_id]["tags"].append(row[7])
 
         todos = list(todos_dict.values())
 
@@ -154,8 +141,10 @@ def getNotYet_todos():
         }), 200
     except Exception as e:
         print(e)
-        
-# 優先度3以上のタスクを表示（タグ情報も含める）
+    finally:
+        cursor.close()
+        connection.close()
+
 def high_priority():
     user_id = 1 # 仮
     # user_id = current_user.user_id
@@ -164,7 +153,7 @@ def high_priority():
         cursor = connection.cursor()
         sql = """
             SELECT t.todo_id, t.todo, t.deadline, t.priority, t.finish_flg, t.estimated_time, t.user_id,
-                   tg.tag_id, tg.tag
+                   tg.tag
             FROM todos t
             LEFT JOIN todo_to_tag tt ON t.todo_id = tt.todo_id AND tt.delete_flg = FALSE
             LEFT JOIN tags tg ON tt.tag_id = tg.tag_id
@@ -188,11 +177,8 @@ def high_priority():
                     "user_id": row[6],
                     "tags": []
                 }
-            if row[7] is not None and row[8] is not None:
-                todos_dict[todo_id]["tags"].append({
-                    "tag_id": row[7],
-                    "tag": row[8]
-                })
+            if row[7] is not None:
+                todos_dict[todo_id]["tags"].append(row[7])
 
         todos = list(todos_dict.values())
 

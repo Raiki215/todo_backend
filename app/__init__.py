@@ -10,7 +10,7 @@ from .insert_todo import ai_result, manual_save_todo
 from dotenv import load_dotenv
 from .send_email import send_email
 from .get_todos import getAll_todos, getCompleted_todos, getNotYet_todos,high_priority
-from .edit_todos import edit_todo_all
+from .edit_todos import edit_todo_all, finish_flg_OnOff
 from .delete_todo import del_Todo
 from .notification import get_notification_history, read_notification, delete_notification
 
@@ -78,37 +78,43 @@ def create_app():
     
     # userの全てのtodoを取得　
     @app.route('/get_user_todos', methods=['GET'])
-    # @login_required
+    @login_required
     def get_user_todos_route():
         return getAll_todos()
     
     # 完了済みfinish_flg=TRUE 
     @app.route('/get_user_todos_finished', methods=['GET'])
-    # @login_required
+    @login_required
     def get_user_todos_finished_route():
         return getCompleted_todos()
     
     #まだ完了していないtodo 
     @app.route('/get_user_todos_yet', methods=['GET'])
-    # @login_required
+    @login_required
     def get_user_todos_yet_route():
         return getNotYet_todos()
     
     # 優先度3以上のものだけ
     @app.route('/get_user_todos_highpriority', methods=['GET'])
-    # @login_required
+    @login_required
     def get_user_todos_highpriority_route():
         return high_priority()
     
     # 編集（更新）
     @app.route('/get_user_todos_update', methods=['POST'])
-    # @login_required
+    @login_required
     def get_user_todos_update_route():
         return edit_todo_all()
     
+    # finishflgのonoff
+    @app.route('/get_user_todos_finishflg_update', methods=['POST'])
+    @login_required
+    def get_user_todos_update_finishflg_route():
+        return finish_flg_OnOff()
+    
     # 削除
     @app.route('/get_user_todos_delete', methods=['POST'])
-    # @login_required
+    @login_required
     def get_user_todos_delete_route():
         return del_Todo()
 
