@@ -4,6 +4,7 @@ from .register import register_user
 from flask_cors import CORS
 from flask_login import LoginManager, login_required
 from .login import login, logout
+from .me import get_current_user
 import os
 from .models import User
 from .insert_todo import ai_result, manual_save_todo
@@ -53,6 +54,11 @@ def create_app():
     @app.route('/logout', methods=['POST'])
     def logout_route():
         return logout()
+
+    @app.route('/me', methods=['GET'])
+    @login_required
+    def me_route():
+        return get_current_user()
 
     @app.route('/insert_todo', methods=['POST'])
     @login_required
