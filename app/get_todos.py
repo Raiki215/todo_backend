@@ -5,6 +5,7 @@ from flask import jsonify
 
 def getAll_todos():
     user_id = 3 # 仮
+    # user_id = current_user.user_id
     connection = get_connection()
     try:
         cursor = connection.cursor()
@@ -58,6 +59,7 @@ def getAll_todos():
 # 完了済みのタスクを優先度の降順で表示（タグ情報も含める）
 def getCompleted_todos():
     user_id = 1 # 仮
+    # user_id = current_user.user_id
     connection = get_connection()
     try:
         cursor = connection.cursor()
@@ -108,6 +110,7 @@ def getCompleted_todos():
 # 未完了のタスクを優先度の降順で表示（タグ情報も含める）
 def getNotYet_todos():
     user_id = 1 # 仮
+    # user_id = current_user.user_id
     connection = get_connection()
     try:
         cursor = connection.cursor()
@@ -155,6 +158,7 @@ def getNotYet_todos():
 # 優先度3以上のタスクを表示（タグ情報も含める）
 def high_priority():
     user_id = 1 # 仮
+    # user_id = current_user.user_id
     connection = get_connection()
     try:
         cursor = connection.cursor()
