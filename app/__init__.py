@@ -12,6 +12,7 @@ from .send_email import send_email
 from .get_todos import getAll_todos, getCompleted_todos, getNotYet_todos,high_priority
 from .edit_todos import edit_todo_all
 from .delete_todo import del_Todo
+from .notification import get_notification_history, read_notification, delete_notification
 
 load_dotenv()
 
@@ -110,5 +111,20 @@ def create_app():
     # @login_required
     def get_user_todos_delete_route():
         return del_Todo()
+
+    @app.route('/notification_history', methods=['GET'])
+    @login_required
+    def notification_history_route():
+        return get_notification_history()
+
+    @app.route('/read_notification', methods=['GET'])
+    @login_required
+    def read_notification_route():
+        return read_notification()
+
+    @app.route('/delete_notification', methods=['GET'])
+    @login_required
+    def delete_notification_route():
+        return delete_notification()
 
     return app
