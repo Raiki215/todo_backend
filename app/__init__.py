@@ -11,7 +11,7 @@ from .insert_todo import ai_result, manual_save_todo
 from dotenv import load_dotenv
 from .send_email import send_email
 from .get_todos import getAll_todos, getCompleted_todos, getNotYet_todos,high_priority
-from .edit_todos import edit_todo_all, finish_flg_OnOff
+from .edit_todos import edit_todo_all, finish_flg_OnOff, tomorrow_todo
 from .delete_todo import del_Todo
 from .notification import get_notification_history, read_notification, delete_notification
 
@@ -139,4 +139,8 @@ def create_app():
     def delete_notification_route():
         return delete_notification()
 
+    @app.route('/tomorrow_todo', methods=['GET'])
+    @login_required
+    def tomorrow_todo_route():
+        return tomorrow_todo()
     return app
