@@ -3,6 +3,7 @@ from flask import request, jsonify, session
 from flask_login import current_user
 
 def edit_todo_all():
+    tag_table_msg = ""
     try:
         data = request.json
         todo_id = data.get("todo_id")
@@ -41,18 +42,27 @@ def edit_todo_all():
         #タグlist　空白除去
         new_tag_list = [item.strip() for item in tags.split(",")]
         new_tag_id_list = []
+        new_tag_name_list = []
+        new_tag_tableID = []
+        new_tag_tableNAME = []
         # タグが既存でない場合はどうするか
         # tagの文字列からidを検索　→　idをlistに格納
         for i in new_tag_list:
-            cursor.execute("select tag_id from tags  where tag = %s", (i,))
+            cursor.execute("select tag_id from tags where tag = %s", (i,))
             tag_id = cursor.fetchone()
             if tag_id is None:
-                print("存在しないタグの時は追加する処理の呼び出し")
-                # 今回は仮で1
-                tag_id = 1
-                # continue
+                # 新規タグを追加し、そのIDを取得してリストに追加
+                cursor.execute("INSERT INTO tags(tag) VALUES(%s) RETURNING tag_id", (i,))
+                new_tag_id = cursor.fetchone()[0]
+                new_tag_id_list.append(new_tag_id)
+                new_tag_name_list.append(i)
+                new_tag_tableID.append(new_tag_id)
+                new_tag_tableNAME.append(i)
+                connection.commit()
+                tag_table_msg = "Added to the tags table"
             else:
                 new_tag_id_list.append(tag_id[0])
+                new_tag_name_list.append(i)
             
         # listをセットにし重複を排除 → listに戻し（ソートは一応）
         # new_tag_id_list =  set(new_tag_id_list)
@@ -108,7 +118,8 @@ def edit_todo_all():
             
             
         return jsonify({
-            "message" : "todos Update completed.",
+            "message" : "todos Update completed."  +  tag_table_msg,
+            "added_tag_table":[{"id": tid, "name": tname} for tid, tname in zip(new_tag_tableID, new_tag_tableNAME)],
             "todo_id": todo_id,
             "data" : data,
             
