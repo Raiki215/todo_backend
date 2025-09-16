@@ -201,14 +201,12 @@ def search_by_tag_and_finish():
         search_tag = data.get("tag")      # 例: "仕事" or None
         finish_flg = data.get("finish_flg")  # True/False/"all" or None
 
-        # tagもfinish_flgも指定なし
+        
         if  search_tag == "all" and finish_flg == "all":
             return getAll_todos()
-
-        # tag指定なし、finish_flgのみ指定
-        if finish_flg is True:
+        elif search_tag == "all" and finish_flg is True:
             return getCompleted_todos()
-        elif finish_flg is False:
+        elif search_tag == "all" and finish_flg is False:
             return getNotYet_todos()
 
         # tag指定あり、finish_flg指定なし
@@ -222,6 +220,79 @@ def search_by_tag_and_finish():
                 JOIN tags tg ON tt.tag_id = tg.tag_id
                 WHERE t.user_id = %s
                   AND t.delete_flg = FALSE
+                ORDER BY t.priority DESC, t.todo_id ASC
+            """
+            cursor.execute(sql, (user_id,))
+            result = cursor.fetchall()
+            todos_dict = {}
+            for row in result:
+                todo_id = row[0]
+                if todo_id not in todos_dict:
+                    todos_dict[todo_id] = {
+                        "todo_id": row[0],
+                        "todo": row[1],
+                        "deadline": row[2],
+                        "priority": row[3],
+                        "finish_flg": row[4],
+                        "estimated_time": row[5],
+                        "user_id": row[6],
+                        "tags": []
+                    }
+                if row[7] is not None and row[7] not in todos_dict[todo_id]["tags"]:
+                    todos_dict[todo_id]["tags"].append(row[7])
+            todos = [todo for todo in todos_dict.values() if search_tag in todo["tags"]]
+            return jsonify({
+                "message": "successful!!",
+                "datas": todos,
+            }), 200
+            # tag指定あり、finish_flg指定なし
+        elif search_tag and finish_flg is True:
+            # tagのみで絞り込み
+            sql = """
+                SELECT t.todo_id, t.todo, t.deadline, t.priority, t.finish_flg, t.estimated_time, t.user_id,
+                       tg.tag
+                FROM todos t
+                JOIN todo_to_tag tt ON t.todo_id = tt.todo_id AND tt.delete_flg = FALSE
+                JOIN tags tg ON tt.tag_id = tg.tag_id
+                WHERE t.user_id = %s
+                  AND t.delete_flg = FALSE
+                  AND t.finish_flg = TRUE 
+                ORDER BY t.priority DESC, t.todo_id ASC
+            """
+            cursor.execute(sql, (user_id,))
+            result = cursor.fetchall()
+            todos_dict = {}
+            for row in result:
+                todo_id = row[0]
+                if todo_id not in todos_dict:
+                    todos_dict[todo_id] = {
+                        "todo_id": row[0],
+                        "todo": row[1],
+                        "deadline": row[2],
+                        "priority": row[3],
+                        "finish_flg": row[4],
+                        "estimated_time": row[5],
+                        "user_id": row[6],
+                        "tags": []
+                    }
+                if row[7] is not None and row[7] not in todos_dict[todo_id]["tags"]:
+                    todos_dict[todo_id]["tags"].append(row[7])
+            todos = [todo for todo in todos_dict.values() if search_tag in todo["tags"]]
+            return jsonify({
+                "message": "successful!!",
+                "datas": todos,
+            }), 200
+        elif search_tag and finish_flg is False:
+            # tagのみで絞り込み
+            sql = """
+                SELECT t.todo_id, t.todo, t.deadline, t.priority, t.finish_flg, t.estimated_time, t.user_id,
+                       tg.tag
+                FROM todos t
+                JOIN todo_to_tag tt ON t.todo_id = tt.todo_id AND tt.delete_flg = FALSE
+                JOIN tags tg ON tt.tag_id = tg.tag_id
+                WHERE t.user_id = %s
+                  AND t.delete_flg = FALSE
+                  AND t.finish_flg = FALSE 
                 ORDER BY t.priority DESC, t.todo_id ASC
             """
             cursor.execute(sql, (user_id,))
