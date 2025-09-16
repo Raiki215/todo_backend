@@ -9,7 +9,7 @@ from .models import User
 from .insert_todo import ai_result, manual_save_todo
 from dotenv import load_dotenv
 from .send_email import send_email
-from .get_todos import getAll_todos, getCompleted_todos, getNotYet_todos,high_priority
+from .get_todos import getAll_todos, getCompleted_todos, getNotYet_todos,high_priority, search_by_tag_and_finish #partial_search
 from .edit_todos import edit_todo_all, finish_flg_OnOff
 from .delete_todo import del_Todo
 from .notification import get_notification_history, read_notification, delete_notification
@@ -99,6 +99,19 @@ def create_app():
     @login_required
     def get_user_todos_highpriority_route():
         return high_priority()
+    
+    #tagとfinishflgの複合検索
+    @app.route('/search_by_tag_and_finish', methods=['POST'])
+    # @login_required
+    def get_user_todos_tag_finishflg_route():
+        return search_by_tag_and_finish()
+    
+    # # 検索（部分一致）いらない
+    # @app.route('/search_by_partial', methods=['GET'])
+    # # @login_required
+    # def get_user_todos_partial_route():
+    #     return partial_search()
+    
     
     # 編集（更新）
     @app.route('/get_user_todos_update', methods=['POST'])
