@@ -129,9 +129,9 @@ def finish_flg_OnOff():
         
         cursor = connection.cursor()
         data = request.json
-        todo_id = data.get("todo_id")
-        # finish_flg = data.get("fininsh_flg")
-        cursor.execute("UPDATE todos SET finish_flg = NOT finish_flg WHERE todo_id = %s", (todo_id,))
+        todo_id = int(data.get("todo_id"))
+        finish_flg = data.get("finish_flg")
+        cursor.execute("UPDATE todos SET finish_flg = %s WHERE todo_id = %s", (finish_flg, todo_id))
         connection.commit()
         cursor.execute("select finish_flg from todos where todo_id = %s",(todo_id,))
         finish_flg = cursor.fetchone()[0]
