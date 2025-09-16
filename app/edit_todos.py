@@ -14,7 +14,7 @@ def edit_todo_all():
         estimated_time = data.get("estimated_time") 
         # delete_flg = data.get("delete_flg") 
         tags = data.get("tags",[])
-        # user_id = data.get("user_id") 
+        user_id = current_user.user_id
         
         required = ["todo", "deadline", "estimated_time", "tags", "priority"]
         for key in required:
@@ -115,19 +115,26 @@ def edit_todo_all():
                     (todo_id, addflgTagid,)
                 )
                 connection.commit()
-            
-            
+
+        cursor.execute("""
+            SELECT DISTINCT t.tag_id, t.tag
+            FROM tags t
+            INNER JOIN todo_to_tag tt ON t.tag_id = tt.tag_id
+            INNER JOIN todos td ON tt.todo_id = td.todo_id
+            WHERE td.user_id = %s AND tt.delete_flg = FALSE AND td.delete_flg = FALSE
+            ORDER BY t.tag
+        """, (user_id,))
+        all_tags = [{"tag_id": tag[0], "tag": tag[1]} for tag in cursor.fetchall()]
+        data["all_tags"] = all_tags
         return jsonify({
             "message" : "todos Update completed."  +  tag_table_msg,
             "added_tag_table":[{"id": tid, "name": tname} for tid, tname in zip(new_tag_tableID, new_tag_tableNAME)],
             "data" : data,
-            
         }),200
     except Exception as e:
         print(e)
         return jsonify({
             "message": "error",
-            "aaaa":addflgTagid
         })
     finally:
         cursor.close()
