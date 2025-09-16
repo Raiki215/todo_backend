@@ -4,8 +4,8 @@ from flask import jsonify, request
 
 
 def getAll_todos():
-    # user_id = current_user.user_id
-    user_id = 1
+    user_id = current_user.user_id
+    # user_id = 1
     connection = get_connection()
     try:
         cursor = connection.cursor()
@@ -52,8 +52,8 @@ def getAll_todos():
         connection.close()
 
 def getCompleted_todos():
-    # user_id = current_user.user_id
-    user_id = 1
+    user_id = current_user.user_id
+    # user_id = 1
     connection = get_connection()
     try:
         cursor = connection.cursor()
@@ -99,8 +99,8 @@ def getCompleted_todos():
         connection.close()
 
 def getNotYet_todos():
-    # user_id = current_user.user_id
-    user_id = 1
+    user_id = current_user.user_id
+    # user_id = 1
     connection = get_connection()
     try:
         cursor = connection.cursor()
@@ -192,8 +192,8 @@ def high_priority():
         connection.close()
         
 def search_by_tag_and_finish():
-    # user_id = current_user.user_id
-    user_id = 1#動作確認なための仮のもの。後で消して、↑のコメントアウトを外す
+    user_id = current_user.user_id
+    # user_id = 1 
     connection = get_connection()
     try:
         cursor = connection.cursor()

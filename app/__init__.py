@@ -4,13 +4,14 @@ from .register import register_user
 from flask_cors import CORS
 from flask_login import LoginManager, login_required
 from .login import login, logout
+from .me import get_current_user
 import os
 from .models import User
 from .insert_todo import ai_result, manual_save_todo
 from dotenv import load_dotenv
 from .send_email import send_email
-from .get_todos import getAll_todos, getCompleted_todos, getNotYet_todos,high_priority, search_by_tag_and_finish #partial_search
-from .edit_todos import edit_todo_all, finish_flg_OnOff
+from .get_todos import getAll_todos, getCompleted_todos, getNotYet_todos,high_priority, search_by_tag_and_finish
+from .edit_todos import edit_todo_all, finish_flg_OnOff, tomorrow_todo
 from .delete_todo import del_Todo
 from .notification import get_notification_history, read_notification, delete_notification
 
@@ -60,6 +61,11 @@ def create_app():
     @app.route('/logout', methods=['POST'])
     def logout_route():
         return logout()
+
+    @app.route('/me', methods=['GET'])
+    @login_required
+    def me_route():
+        return get_current_user()
 
     @app.route('/insert_todo', methods=['POST'])
     @login_required
@@ -146,4 +152,8 @@ def create_app():
     def delete_notification_route():
         return delete_notification()
 
+    @app.route('/tomorrow_todo', methods=['GET'])
+    @login_required
+    def tomorrow_todo_route():
+        return tomorrow_todo()
     return app
