@@ -45,7 +45,7 @@ def edit_todo_all():
         new_tag_name_list = []
         new_tag_tableID = []
         new_tag_tableNAME = []
-        # タグが既存でない場合はどうするか
+
         # tagの文字列からidを検索　→　idをlistに格納
         for i in new_tag_list:
             cursor.execute("select tag_id from tags where tag = %s", (i,))
@@ -120,7 +120,6 @@ def edit_todo_all():
         return jsonify({
             "message" : "todos Update completed."  +  tag_table_msg,
             "added_tag_table":[{"id": tid, "name": tname} for tid, tname in zip(new_tag_tableID, new_tag_tableNAME)],
-            "todo_id": todo_id,
             "data" : data,
             
         }),200
