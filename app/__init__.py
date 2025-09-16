@@ -14,6 +14,7 @@ from .get_todos import getAll_todos, getCompleted_todos, getNotYet_todos,high_pr
 from .edit_todos import edit_todo_all, finish_flg_OnOff, tomorrow_todo
 from .delete_todo import del_Todo
 from .notification import get_notification_history, read_notification, delete_notification
+from .get_tags import getAll_tags
 
 load_dotenv()
 
@@ -143,4 +144,10 @@ def create_app():
     @login_required
     def tomorrow_todo_route():
         return tomorrow_todo()
+
+    @app.route('/get_tags', methods=['GET'])
+    @login_required
+    def get_tags_route():
+        return getAll_tags()
+
     return app
