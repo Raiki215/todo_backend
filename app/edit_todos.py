@@ -129,9 +129,9 @@ def finish_flg_OnOff():
         
         cursor = connection.cursor()
         data = request.json
-        todo_id = data.get("todo_id")
-        # finish_flg = data.get("fininsh_flg")
-        cursor.execute("UPDATE todos SET finish_flg = NOT finish_flg WHERE todo_id = %s", (todo_id,))
+        todo_id = int(data.get("todo_id"))
+        finish_flg = data.get("finish_flg")
+        cursor.execute("UPDATE todos SET finish_flg = %s WHERE todo_id = %s", (finish_flg, todo_id))
         connection.commit()
         cursor.execute("select finish_flg from todos where todo_id = %s",(todo_id,))
         finish_flg = cursor.fetchone()[0]
@@ -151,3 +151,22 @@ def finish_flg_OnOff():
         return jsonify({
             "error" : "Could not update the this todos finish_flg "
         }),500
+
+def tomorrow_todo():
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        todo_id = int(request.args.get("todo_id"))
+        cursor.execute("""
+        UPDATE todos SET deadline = deadline + INTERVAL '1 day'
+        WHERE todo_id = %s
+        RETURNING todo_id, deadline
+        """, (todo_id,))
+        todo = cursor.fetchone()
+        conn.commit()
+        return jsonify({"todo_id": todo[0], "deadline": todo[1]}), 200
+    except Exception as e:
+        return jsonify({"error": "Internal Server Error"}), 500
+    finally:
+        cursor.close()
+        conn.close()
