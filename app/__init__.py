@@ -108,7 +108,7 @@ def create_app():
     
     #tagとfinishflgの複合検索
     @app.route('/search_by_tag_and_finish', methods=['POST'])
-    # @login_required
+    @login_required
     def get_user_todos_tag_finishflg_route():
         return search_by_tag_and_finish()
     
