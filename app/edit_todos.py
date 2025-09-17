@@ -162,6 +162,35 @@ def finish_flg_OnOff():
             "error" : "Could not update the this todos finish_flg "
         }),500
 
+def pressure_flg_OnOff():
+    connection = get_connection()
+    try:
+        
+        cursor = connection.cursor()
+        data = request.json
+        todo_id = int(data.get("todo_id"))
+        pressure_flg = data.get("pressure_flg")
+        cursor.execute("UPDATE todos SET pressure_flg = %s WHERE todo_id = %s", (pressure_flg, todo_id))
+        connection.commit()
+        cursor.execute("select  pressure_flg from todos where todo_id = %s",(todo_id,))
+        pressure_flg = cursor.fetchone()[0]
+
+        if pressure_flg:
+            msg = f"successful !! Pressure mode turned on"
+        else:
+            msg = f"successful !! Pressure mode turned off"
+        
+        
+        return jsonify({
+            "message" : msg,
+            "todo_id": todo_id,
+            "pressure_flg":pressure_flg,
+        }),200
+    except Exception as e:
+        return jsonify({
+            "error" : "Could not update the this todos pressure_flg "
+        }),500
+
 def tomorrow_todo():
     conn = get_connection()
     try:
