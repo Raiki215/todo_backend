@@ -1,6 +1,7 @@
 from flask import request, jsonify, session
 from flask_login import login_user, logout_user, login_required, current_user
 from .models import User
+from .db_connection import get_connection
 
 def login():
     data = request.json
@@ -27,6 +28,17 @@ def login():
     }), 200
 
 def logout():
+    if current_user.is_authenticated:
+        conn = get_connection()
+        cur = conn.cursor()
+        cur.execute("""
+            UPDATE users
+            SET push_subscription = NULL
+            WHERE user_id = %s
+        """, (current_user.user_id,))
+        conn.commit()
+        cur.close()
+        conn.close()
     #ログアウト
     logout_user()
     session.clear()

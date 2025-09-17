@@ -15,6 +15,7 @@ from .edit_todos import edit_todo_all, finish_flg_OnOff, tomorrow_todo
 from .delete_todo import del_Todo
 from .notification import get_notification_history, read_notification, delete_notification
 from .get_tags import getAll_tags
+from .save_subscription import save_subscription
 
 load_dotenv()
 
@@ -162,5 +163,16 @@ def create_app():
     @login_required
     def get_tags_route():
         return getAll_tags()
+    
+    @app.route('/save-subscription', methods=['POST'])
+    @login_required
+    def save_subscription_route():
+        return save_subscription()
+    
+    # テスト用の通知エンドポイント
+    @app.route('/test-notification', methods=['GET'])
+    @login_required
+    def test_notification_route():
+        return test_push_notification()
 
     return app
