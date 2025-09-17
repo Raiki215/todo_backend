@@ -37,8 +37,8 @@ def getAll_todos():
                     "tags": []
                 }
             # タグ名があれば追加
-            if row[7] is not None:
-                todos_dict[todo_id]["tags"].append(row[7])
+            if row[8] is not None:
+                todos_dict[todo_id]["tags"].append(row[8])
 
         todos = list(todos_dict.values())
 
@@ -85,7 +85,7 @@ def getCompleted_todos():
                     "tags": []
                 }
             if row[7] is not None:
-                todos_dict[todo_id]["tags"].append(row[7])
+                todos_dict[todo_id]["tags"].append(row[8])
 
         todos = list(todos_dict.values())
 
