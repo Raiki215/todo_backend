@@ -4,13 +4,13 @@ from flask import jsonify, request
 
 
 def getAll_todos():
-    user_id = current_user.user_id
-    # user_id = 1
+    # user_id = current_user.user_id
+    user_id = 1
     connection = get_connection()
     try:
         cursor = connection.cursor()
         sql = """
-            SELECT t.todo_id, t.todo, t.deadline, t.priority, t.finish_flg, t.estimated_time, t.user_id,
+            SELECT t.todo_id, t.todo, t.deadline, t.priority, t.finish_flg, t.estimated_time, t.pressure_flg, t.user_id,
                    tg.tag
             FROM todos t
             LEFT JOIN todo_to_tag tt ON t.todo_id = tt.todo_id AND tt.delete_flg = FALSE
@@ -32,7 +32,8 @@ def getAll_todos():
                     "priority": row[3],
                     "finish_flg": row[4],
                     "estimated_time": row[5],
-                    "user_id": row[6],
+                    "pressure_flg":row[6],
+                    "user_id": row[7],
                     "tags": []
                 }
             # タグ名があれば追加

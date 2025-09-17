@@ -133,7 +133,7 @@ def create_app():
     
     # プレッシャーモードのonoff
     @app.route('/pressure_mode_onoff', methods=['POST'])
-    # @login_required
+    @login_required
     def get_user_todos_pressure_mode_route():
         return pressure_flg_OnOff()
     
