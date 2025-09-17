@@ -4,8 +4,8 @@ from flask import jsonify, request
 
 
 def getAll_todos():
-    # user_id = current_user.user_id
-    user_id = 1
+    user_id = current_user.user_id
+    # user_id = 1
     connection = get_connection()
     try:
         cursor = connection.cursor()
