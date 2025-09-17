@@ -85,7 +85,7 @@ def getCompleted_todos():
                     "tags": []
                 }
             if row[7] is not None:
-                todos_dict[todo_id]["tags"].append(row[8])
+                todos_dict[todo_id]["tags"].append(row[7])
 
         todos = list(todos_dict.values())
 
