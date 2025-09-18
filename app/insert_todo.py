@@ -7,6 +7,7 @@ import os, re
 import json
 from .db_connection import get_connection
 
+
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
 client = genai.Client(api_key=api_key)
@@ -94,6 +95,7 @@ def save_todo_with_tags(data, user_id):
         )
         todo_id = cursor.fetchone()[0]
         tags_info = []
+        
         for tag in tags:
             cursor.execute("SELECT tag_id FROM tags WHERE tag = %s", (tag,))
             tag_row = cursor.fetchone()
@@ -106,6 +108,17 @@ def save_todo_with_tags(data, user_id):
 
             cursor.execute("INSERT INTO todo_to_tag (todo_id, tag_id) VALUES (%s, %s)", (todo_id, tag_id))
             tags_info.append(tag)
+
+        cursor.execute("""
+            SELECT DISTINCT t.tag_id, t.tag 
+            FROM tags t
+            INNER JOIN todo_to_tag tt ON t.tag_id = tt.tag_id
+            INNER JOIN todos td ON tt.todo_id = td.todo_id
+            WHERE td.user_id = %s AND tt.delete_flg = FALSE AND td.delete_flg = FALSE
+            ORDER BY t.tag
+        """, (user_id,))
+        all_tags = [{"tag_id": tag[0], "tag": tag[1]} for tag in cursor.fetchall()]
+
         conn.commit()
         todo_info = {
             "todo_id": todo_id,
@@ -113,7 +126,8 @@ def save_todo_with_tags(data, user_id):
             "deadline": deadline,
             "estimated_time": estimated_time,
             "priority": priority,
-            "tags": tags_info
+            "tags": tags_info,
+            "all_tags": all_tags,
         }
         return todo_info
     except Exception as e:
