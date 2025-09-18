@@ -9,11 +9,10 @@ import os
 from .models import User
 from .insert_todo import ai_result, manual_save_todo
 from dotenv import load_dotenv
-from .send_email import send_email
 from .get_todos import getAll_todos, getCompleted_todos, getNotYet_todos,high_priority, search_by_tag_and_finish
 from .edit_todos import edit_todo_all, finish_flg_OnOff, tomorrow_todo
 from .delete_todo import del_Todo
-from .notification import get_notification_history, read_notification, delete_notification
+from .notification import get_notification_history, read_notification, delete_notification, init_scheduler, test_push_notification
 from .get_tags import getAll_tags
 from .save_subscription import save_subscription
 
@@ -79,10 +78,6 @@ def create_app():
     def manual_insert_todo():
         return manual_save_todo()
 
-    @app.route('/send_email', methods=['POST'])
-    @login_required
-    def send_email_route():
-        return send_email()
     
     # userの全てのtodoを取得　
     @app.route('/get_user_todos', methods=['GET'])
@@ -174,5 +169,9 @@ def create_app():
     @login_required
     def test_notification_route():
         return test_push_notification()
-
+    
+    # アプリケーション起動時にスケジューラーを初期化し、アプリケーションインスタンスを渡す
+    init_scheduler(app=app)
+    print("アプリケーション起動: 通知スケジューラーが初期化されました")
+    
     return app

@@ -1,4 +1,4 @@
-from flask import jsonify, request
+from flask import jsonify, request, current_app
 from flask_login import current_user
 from .db_connection import get_connection
 import datetime
@@ -10,6 +10,7 @@ from flask_login import current_user
 import json
 import os
 import pytz
+from .send_email import send_email
 
 load_dotenv()
 
@@ -26,19 +27,17 @@ def check_todos_and_notify():
     print(f"現在の東京時刻: {now}")
 
     try:
-        # 30分前チェック - 通知済みのタスクを除外
+        # 30分前チェック - 重複チェックなし（何度でも通知可能）
         cur.execute("""
             SELECT t.todo_id, t.todo, t.deadline, u.push_subscription, u.user_id
             FROM todos t
             JOIN users u ON t.user_id = u.user_id
-            LEFT JOIN notifications n ON t.todo_id = n.todo_id AND n.message = '締切30分前の通知'
             WHERE t.finish_flg = FALSE
               AND t.delete_flg = FALSE
               AND u.push_subscription IS NOT NULL
               AND t.deadline IS NOT NULL
               AND t.deadline - interval '30 minutes' <= %s
               AND t.deadline - interval '29 minutes' > %s
-              AND n.notification_id IS NULL
         """, (now, now))
 
         rows = cur.fetchall()
@@ -59,13 +58,36 @@ def check_todos_and_notify():
                             "body": f"{todo} の締切が近いです！"
                         }
                         
-                        # 通知送信
+                        # プッシュ通知送信
                         webpush(
                             subscription_info=subscription_info,
                             data=json.dumps(payload),
                             vapid_private_key=VAPID_PRIVATE_KEY,
                             vapid_claims=VAPID_CLAIMS
                         )
+                        
+                        # メール通知送信
+                        try:
+                            # グローバル変数のflask_appを使用（スケジューラー起動時に設定されたもの）
+                            global flask_app
+                            if flask_app is None:
+                                print("Flaskアプリケーションが設定されていないため、メール送信をスキップします")
+                            else:
+                                notification_message = "締切30分前の通知"
+                                email_sent = send_email(
+                                    user_id=user_id, 
+                                    todo=todo, 
+                                    deadline=deadline, 
+                                    alert_message=notification_message,
+                                    app=flask_app
+                                )
+                                if email_sent:
+                                    print(f"メール通知送信成功: ToDo ID {todo_id}, ユーザーID {user_id}")
+                                else:
+                                    print(f"メール通知送信失敗: ToDo ID {todo_id}, ユーザーID {user_id}")
+                        except Exception as e:
+                            print(f"メール送信中にエラー発生: {e}")
+                        
                         
                         # 通知履歴に記録
                         notification_message = "締切30分前の通知"
@@ -98,13 +120,19 @@ def check_todos_and_notify():
         print("=== 通知チェック完了 ===\n")
 
 
-# スケジューラーのインスタンスを作成するが、まだ起動はしない
+# スケジューラーとFlaskアプリのインスタンスをグローバル変数として保持
 scheduler = None
+flask_app = None
 
 # スケジューラーを初期化する関数を定義
 # この関数はアプリケーション起動時に呼び出す
-def init_scheduler():
-    global scheduler
+def init_scheduler(app=None):
+    global scheduler, flask_app
+    
+    # Flaskアプリインスタンスを保存（通知処理で使用）
+    if app is not None:
+        flask_app = app
+    
     try:
         # スケジューラーがまだ作成されていない場合のみ初期化
         if scheduler is None:
