@@ -6,7 +6,7 @@ def edit_todo_all():
     tag_table_msg = ""
     try:
         data = request.json
-        todo_id = data.get("todo_id")
+        todo_id = int(data.get("todo_id"))
         todo = data.get("todo")
         deadline = data.get("deadline")
         priority = data.get("priority")

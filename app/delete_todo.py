@@ -3,7 +3,7 @@ from flask import request, jsonify, session
 from flask_login import current_user
 def del_Todo():
     data = request.json
-    todo_id = data.get("todo_id")
+    todo_id = int(data.get("todo_id"))
     user_id = current_user.user_id
     connection = get_connection()
     try:
