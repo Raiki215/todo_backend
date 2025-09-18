@@ -1,54 +1,45 @@
 -- ユーザー
 INSERT INTO users (name, email, password) VALUES
 ('山田太郎', 'taro@example.com', 'password123'),
-('佐藤花子', 'hanako@example.com', 'password456');
-
--- タグ
-INSERT INTO tags (tag) VALUES
-('仕事'),
-('勉強'),
-('プライベート');
-
--- TODO
-INSERT INTO todos (todo, deadline, priority, finish_flg, estimated_time, user_id, delete_flg) VALUES
-('レポート提出', '2025-09-15 17:00:00', 3, FALSE, 120, 1, FALSE),
-('会議準備', '2025-09-12 09:00:00', 2, TRUE, 60, 1, FALSE),
-('英語の勉強', '2025-09-20 20:00:00', 1, FALSE, 30, 2, FALSE),
-('買い物', '2025-09-11 18:00:00', 2, FALSE, 45, 2, FALSE),
-('プレゼン資料作成', '2025-09-13 10:00:00', 3, FALSE, 90, 1, FALSE);
-
--- TODOとタグの紐付け
-INSERT INTO todo_to_tag (todo_id, tag_id, delete_flg) VALUES
-(1, 2, FALSE), -- レポート提出 → 勉強
-(2, 1,  FALSE), -- 会議準備 → 仕事
-(3, 2,  FALSE), -- 英語の勉強 → 勉強
-(4, 3,  FALSE), -- 買い物 → プライベート
-(5, 1,  FALSE), -- プレゼン資料作成 → 仕事
-(5, 2,  FALSE); -- プレゼン資料作成 → 勉強
-
--- 追加ユーザー
-INSERT INTO users (name, email, password) VALUES
+('佐藤花子', 'hanako@example.com', 'password456'),
 ('田中一郎', 'ichiro@example.com', 'pass789'),
 ('高橋次郎', 'jiro@example.com', 'pass1011');
 
--- 追加タグ
 INSERT INTO tags (tag) VALUES
+('仕事'),
+('プライベート'),
+('緊急'),
 ('健康'),
-('趣味');
+('学習');
 
--- 追加TODO
-INSERT INTO todos (todo, deadline, priority, finish_flg, estimated_time, user_id, delete_flg) VALUES
-('ジョギング', '2025-09-16 06:30:00', 5, FALSE, 40, 3, FALSE),
-('読書', '2025-09-17 21:00:00', 2, FALSE, 60, 4, FALSE),
-('病院予約', '2025-09-14 10:00:00', 4, TRUE, 10, 3, FALSE),
-('ギター練習', '2025-09-18 19:00:00', 1, FALSE, 30, 4, FALSE),
-('資料整理', '2025-09-19 15:00:00', 3, FALSE, 50, 3, FALSE);
+INSERT INTO todos (todo, deadline, priority, finish_flg, estimated_time, user_id, delete_flg, pressure_flg) VALUES
+('企画書の作成', '2025-09-20 17:00:00', 1, FALSE, 120, 1, FALSE, TRUE),
+('買い物に行く', '2025-09-17 12:00:00', 3, FALSE, 60, 2, FALSE, FALSE),
+('定期健診の予約', '2025-09-30 10:00:00', 2, FALSE, 30, 3, FALSE, FALSE),
+('Reactの勉強', NULL, 4, FALSE, 180, 4, FALSE, FALSE),
+('プロジェクトミーティング', '2025-09-18 09:00:00', 1, FALSE, 90, 1, FALSE, TRUE),
+('旅行の計画', NULL, 5, FALSE, 120, 2, FALSE, FALSE),
+('パスワード変更', '2025-09-19 18:00:00', 2, TRUE, 15, 3, FALSE, FALSE),
+('散歩', NULL, 5, FALSE, 30, 4, FALSE, FALSE),
+('レポート提出', '2025-09-21 23:59:00', 1, FALSE, 60, 1, FALSE, TRUE),
+('動画教材を見る', NULL, 4, FALSE, 90, 2, FALSE, FALSE);
 
--- 追加TODOとタグの紐付け
-INSERT INTO todo_to_tag (todo_id, tag_id, delete_flg) VALUES
-(6, 4, FALSE), -- ジョギング → 健康
-(7, 5, FALSE), -- 読書 → 趣味
-(8, 4, FALSE), -- 病院予約 → 健康
-(9, 5, FALSE), -- ギター練習 → 趣味
-(10, 1, FALSE), -- 資料整理 → 仕事
-(10, 4, FALSE); -- 資料整理 → 健康
+INSERT INTO todo_to_tag (todo_id, tag_id) VALUES
+(1, 1), (1, 3),        -- 企画書の作成 → 仕事, 緊急
+(2, 2),                -- 買い物に行く → プライベート
+(3, 4),                -- 健康
+(4, 5),                -- 学習
+(5, 1), (5, 3),        -- ミーティング → 仕事, 緊急
+(6, 2),                -- 旅行 → プライベート
+(7, 1),                -- パスワード変更 → 仕事
+(8, 4),                -- 散歩 → 健康
+(9, 1), (9, 3),        -- レポート提出 → 仕事, 緊急
+(10, 5);               -- 動画教材 → 学習
+
+INSERT INTO notifications (todo_id, user_id, message, read_flg) VALUES
+(1, 1, '「企画書の作成」の締切が近づいています！', FALSE),
+(5, 1, '「プロジェクトミーティング」のリマインダーです。', TRUE),
+(3, 3, '「定期健診の予約」を忘れずに！', FALSE),
+(9, 1, '「レポート提出」の期限が迫っています。', FALSE),
+(7, 3, '「パスワード変更」が完了しました。', TRUE);
+

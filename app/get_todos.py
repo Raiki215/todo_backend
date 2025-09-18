@@ -10,7 +10,7 @@ def getAll_todos():
     try:
         cursor = connection.cursor()
         sql = """
-            SELECT t.todo_id, t.todo, t.deadline, t.priority, t.finish_flg, t.estimated_time, t.user_id,
+            SELECT t.todo_id, t.todo, t.deadline, t.priority, t.finish_flg, t.estimated_time, t.pressure_flg, t.user_id,
                    tg.tag
             FROM todos t
             LEFT JOIN todo_to_tag tt ON t.todo_id = tt.todo_id AND tt.delete_flg = FALSE
@@ -32,12 +32,13 @@ def getAll_todos():
                     "priority": row[3],
                     "finish_flg": row[4],
                     "estimated_time": row[5],
-                    "user_id": row[6],
+                    "pressure_flg":row[6],
+                    "user_id": row[7],
                     "tags": []
                 }
             # タグ名があれば追加
-            if row[7] is not None:
-                todos_dict[todo_id]["tags"].append(row[7])
+            if row[8] is not None:
+                todos_dict[todo_id]["tags"].append(row[8])
 
         todos = list(todos_dict.values())
 

@@ -10,7 +10,7 @@ from .models import User
 from .insert_todo import ai_result, manual_save_todo
 from dotenv import load_dotenv
 from .get_todos import getAll_todos, getCompleted_todos, getNotYet_todos,high_priority, search_by_tag_and_finish
-from .edit_todos import edit_todo_all, finish_flg_OnOff, tomorrow_todo
+from .edit_todos import edit_todo_all, finish_flg_OnOff, tomorrow_todo, pressure_flg_OnOff
 from .delete_todo import del_Todo
 from .notification import get_notification_history, read_notification, delete_notification, init_scheduler, test_push_notification
 from .get_tags import getAll_tags
@@ -127,6 +127,12 @@ def create_app():
     @login_required
     def get_user_todos_update_finishflg_route():
         return finish_flg_OnOff()
+    
+    # プレッシャーモードのonoff
+    @app.route('/pressure_mode_onoff', methods=['POST'])
+    @login_required
+    def get_user_todos_pressure_mode_route():
+        return pressure_flg_OnOff()
     
     # 削除
     @app.route('/get_user_todos_delete', methods=['POST'])

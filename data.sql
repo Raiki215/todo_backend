@@ -18,6 +18,7 @@ CREATE TABLE todos (
     estimated_time INTEGER,
     user_id INTEGER NOT NULL,
     delete_flg BOOLEAN DEFAULT FALSE,
+    pressure_flg BOOLEAN DEFAULT FALSE,
     CONSTRAINT fk_user
         FOREIGN KEY(user_id)
         REFERENCES users(user_id)
